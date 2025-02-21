@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Calculator</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="calculator">
+      <div id="display">0</div>
+      <div class="buttons">
+        <div class="row">
+          <button class="clear" onclick="clearDisplay()">C</button>
+          <button onclick="backspace()">DEL</button>
+          <button class="tran" onclick="appendNumber('')"></button>
+          <button class="tran" onclick="appendNumber('')"></button>
+        </div>
+        <div class="row">
+          <button onclick="appendNumber('7')">7</button>
+          <button onclick="appendNumber('8')">8</button>
+          <button onclick="appendNumber('9')">9</button>
+          <button class="operator" onclick="appendOperator('+')">+</button>
+        </div>
+        <div class="row">
+          <button onclick="appendNumber('4')">4</button>
+          <button onclick="appendNumber('5')">5</button>
+          <button onclick="appendNumber('6')">6</button>
+          <button class="operator" onclick="appendOperator('-')">-</button>
+        </div>
+        <div class="row">
+          <button onclick="appendNumber('1')">1</button>
+          <button onclick="appendNumber('2')">2</button>
+          <button onclick="appendNumber('3')">3</button>
+          <button class="operator" onclick="appendOperator('*')">*</button>
+        </div>
+        <div class="row">
+          <button onclick="appendNumber('0')">0</button>
+          <button onclick="appendNumber('.')">.</button>
+          <button class="equals" onclick="calculate()">=</button>
+          <button class="operator" onclick="appendOperator('/')">/</button>
+        </div>
+      </div>
+    </div>
+    <script>
+      let currentInput = "0";
+      let previousInput = ""; // Stores the previous number for calculations
+      let operation = null;
+      let shouldResetScreen = false; // Flag to indicate if the display should be cleared before the next number is entered
+
+      const display = document.getElementById("display");
+
+      function updateDisplay() {
+        display.textContent = currentInput; // Updates the display with the current input
+      }
+
+      function appendNumber(number) {
+        if (currentInput === "0" || shouldResetScreen) {
+          // If the display is "0" or the screen should be reset, replace the current input with the new number
+          currentInput = number;
+          shouldResetScreen = false;
+        } else {
+          // Otherwise, append the new number to the current input
+          currentInput += number;
+        }
+        updateDisplay(); // Update the display
+      }
+
+      function appendOperator(operator) {
+        if (operation !== null) {
+          // If an operator is already selected, perform the calculation first
+          calculate();
+        }
+        previousInput = currentInput; // Store the current input as the previous input
+        operation = operator; // Set the new operator
+        shouldResetScreen = true; // Set the flag to clear the display for the next number
+      }
+
+      function calculate() {
+        let computation; // Stores the result of the calculation
+        const prev = parseFloat(previousInput); // Convert the previous input to a floating-point number
+        const current = parseFloat(currentInput);
+
+        if (isNaN(prev) || isNaN(current)) return; // If either input is not a number, exit the function
+
+        switch (operation) {
+          case "+":
+            computation = prev + current;
+            break;
+          case "-":
+            computation = prev - current;
+            break;
+          case "*":
+            computation = prev * current;
+            break;
+          case "/":
+            computation = prev / current;
+            break;
+          default:
+            return;
+        }
+
+        currentInput = computation.toString(); // Convert the result to a string and set it as the current input
+        operation = null; // Reset the operator
+        previousInput = ""; // Reset the previous input
+        shouldResetScreen = true; // Set the flag to clear the display for the next number
+        updateDisplay(); // Update the display
+      }
+
+      function clearDisplay() {
+        currentInput = "0";
+        previousInput = "";
+        operation = null;
+        updateDisplay();
+      }
+
+      function backspace() {
+        currentInput = currentInput.toString().slice(0, -1); // Remove the last character from the current input
+        if (currentInput === "") currentInput = "0"; // If the input becomes empty, set it to "0"
+        updateDisplay();
+      }
+
+      updateDisplay(); // Initialize the display to "0" when the page loads
+    </script>
+  </body>
+</html>
